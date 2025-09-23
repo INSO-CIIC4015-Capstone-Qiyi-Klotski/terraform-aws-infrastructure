@@ -22,28 +22,22 @@ jobs:
 
       - name: Upload Configuration
         id: upload
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.2.0
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Run (plan+apply)
         id: run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.2.0
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           message: "Create run from GitHub Actions ${{ github.sha }}"
 
       - name: Auto-Apply
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.2.0
         if: fromJSON(steps.run.outputs.payload).data.attributes.actions.IsConfirmable
         with:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Apply triggered by GitHub Actions"
-
-      - name: Summary / Links
-        run: |
-          echo "Run ID: ${{ steps.run.outputs.run_id }}"
-          echo "Run URL: ${{ steps.run.outputs.run_link }}"
-          # Nota: el detalle del recurso creado lo ves en el enlace del run

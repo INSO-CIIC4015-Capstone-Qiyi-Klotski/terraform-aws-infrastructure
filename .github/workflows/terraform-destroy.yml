@@ -45,8 +45,3 @@ jobs:
         with:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Destroy Apply triggered by GitHub Actions"
-
-      - name: Summary / Links
-        run: |
-          echo "Run ID: ${{ steps.run.outputs.run_id }}"
-          echo "Run URL: ${{ steps.run.outputs.run_link }}"
