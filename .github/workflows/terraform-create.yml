@@ -1,0 +1,43 @@
+name: terraform-create
+on:
+  workflow_dispatch: {}
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: { id-token: write, contents: read }
+    env:
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+      TF_IN_AUTOMATION: true
+    concurrency:
+      group: terraform-cloud-three-tier-dev
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Init (TFC backend)
+        run: terraform init -input=false
+
+      - name: Fmt & Validate
+        run: |
+          terraform fmt -check -no-color
+          terraform validate -no-color
+
+      - name: Plan (guarda archivo en el run remoto)
+        run: terraform plan -out "create.tfplan" -no-color -input=false
+
+      - name: Apply (auto)
+        run: terraform apply -auto-approve -no-color "create.tfplan"
+
+      - name: Monitor / Summary
+        if: ${{ success() }}
+        run: |
+          echo "::group::Terraform State"
+          terraform state list || true
+          echo "::endgroup::"
+          echo "::group::Terraform Outputs"
+          terraform output -no-color || true
+          echo "::endgroup::"
