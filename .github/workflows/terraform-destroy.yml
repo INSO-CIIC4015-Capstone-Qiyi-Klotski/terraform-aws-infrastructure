@@ -1,40 +1,49 @@
-name: terraform-destroy
+name: "TFC Destroy (plan+apply)"
 on:
   workflow_dispatch: {}
 
+env:
+  TF_CLOUD_ORGANIZATION: "Kiwi_Num_Slide"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "three-tier-dev"
+  CONFIG_DIRECTORY: "./"
+
 jobs:
-  destroy:
+  terraform:
+    name: "Destroy infra via TFC API"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      id-token: write
       contents: read
-    concurrency:
-      group: terraform-cloud-three-tier-dev
-      cancel-in-progress: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Upload Configuration
+        id: upload
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-          terraform_wrapper: false
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.CONFIG_DIRECTORY }}
 
-      - name: Init (TFC backend)
-        run: terraform init
+      - name: Create Destroy Run
+        id: run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
+          is_destroy: true
+          message: "Destroy run from GitHub Actions ${{ github.sha }}"
 
-      - name: Plan destroy (guarda plan)
-        run: terraform plan -destroy -out "destroy.tfplan"
+      - name: Auto-Apply Destroy
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        if: fromJSON(steps.run.outputs.payload).data.attributes.actions.IsConfirmable
+        with:
+          run: ${{ steps.run.outputs.run_id }}
+          comment: "Destroy Apply triggered by GitHub Actions"
 
-      - name: Apply destroy (auto)
-        run: terraform apply -auto-approve "destroy.tfplan"
-
-      - name: Monitor / Summary (post-destroy)
-        if: ${{ always() }}
+      - name: Summary / Links
         run: |
-          echo "::group::Terraform State (expected empty)"
-          terraform state list || echo "Sin estado o vacío (OK tras destroy)"
-          echo "::endgroup::"
+          echo "Run ID: ${{ steps.run.outputs.run_id }}"
+          echo "Run URL: ${{ steps.run.outputs.run_link }}"
