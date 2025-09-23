@@ -22,23 +22,26 @@ jobs:
 
       - name: Upload Configuration
         id: upload
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.2.0
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
 
       - name: Create Destroy Run
         id: run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.2.0
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           is_destroy: true
           message: "Destroy run from GitHub Actions ${{ github.sha }}"
 
+      - name: Debug run payload
+        run: |
+          echo '${{ steps.run.outputs.payload }}' | jq '.data.attributes | {is_destroy: .is_destroy, actions: .actions}'
+
       - name: Auto-Apply Destroy
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.run.outputs.payload).data.attributes.actions.IsConfirmable
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.2.0
         with:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Destroy Apply triggered by GitHub Actions"
