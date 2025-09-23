@@ -1,47 +1,36 @@
 name: terraform-destroy
-on: { workflow_dispatch: {} }
+on:
+  workflow_dispatch: {}
 
 jobs:
   destroy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    permissions: { id-token: write, contents: read }
-    env:
-      TF_IN_AUTOMATION: true
-      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+    permissions:
+      id-token: write
+      contents: read
+    concurrency:
+      group: terraform-cloud-three-tier-dev
+      cancel-in-progress: false
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           terraform_wrapper: false
 
-      - name: Write Terraform CLI credentials (fallback)
-        shell: bash
-        env:
-          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-        run: |
-          mkdir -p ~/.terraform.d
-          cat > ~/.terraform.d/credentials.tfrc.json <<EOF
-          {
-            "credentials": {
-              "app.terraform.io": { "token": "${TF_API_TOKEN}" }
-            }
-          }
-          EOF
-          echo "TF_CLI_CONFIG_FILE=$HOME/.terraform.d/credentials.tfrc.json" >> $GITHUB_ENV
-          wc -c ~/.terraform.d/credentials.tfrc.json
-
       - name: Init (TFC backend)
-        run: terraform init -input=false
+        run: terraform init
 
-      - name: Plan destroy (save plan)
-        run: terraform plan -destroy -out "destroy.tfplan" -no-color -input=false
+      - name: Plan destroy (guarda plan)
+        run: terraform plan -destroy -out "destroy.tfplan"
 
       - name: Apply destroy (auto)
-        run: terraform apply -auto-approve -no-color "destroy.tfplan"
+        run: terraform apply -auto-approve "destroy.tfplan"
 
       - name: Monitor / Summary (post-destroy)
         if: ${{ always() }}
