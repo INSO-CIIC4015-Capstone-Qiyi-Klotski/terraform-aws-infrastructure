@@ -6,26 +6,34 @@ jobs:
   destroy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    permissions: { id-token: write, contents: read }
+    permissions:
+      id-token: write
+      contents: read
     env:
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
       TF_IN_AUTOMATION: true
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+
     concurrency:
       group: terraform-cloud-three-tier-dev
       cancel-in-progress: false
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Init (TFC backend)
         run: terraform init -input=false
 
       - name: Plan destroy (guarda archivo)
-        run: terraform plan -destroy -out "destroy.tfplan"
+        run: terraform plan -destroy -out "destroy.tfplan" -no-color -input=false
 
       - name: Apply destroy (auto)
-        run: terraform apply -auto-approve "destroy.tfplan"
+        run: terraform apply -auto-approve -no-color "destroy.tfplan"
 
       - name: Monitor / Summary (post-destroy)
         if: ${{ always() }}
