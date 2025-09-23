@@ -11,7 +11,7 @@ jobs:
       contents: read
     env:
       TF_IN_AUTOMATION: true
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+      # Terraform acepta esta env var para TFC:
       TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
     concurrency:
@@ -22,18 +22,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Terraform (write CLI creds)
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - name: Ensure CLI credentials file exists
+      # Fuerza credenciales del CLI (equivalente a un 'login' no interactivo)
+      - name: Write Terraform CLI credentials
         shell: bash
         run: |
           mkdir -p ~/.terraform.d
-          if [ -f ~/.terraformrc ] && [ ! -f ~/.terraform.d/credentials.tfrc.json ]; then
-            ln -s ~/.terraformrc ~/.terraform.d/credentials.tfrc.json
-          fi
+          cat > ~/.terraform.d/credentials.tfrc.json <<'EOF'
+          {
+            "credentials": {
+              "app.terraform.io": { "token": "${TF_API_TOKEN}" }
+            }
+          }
+          EOF
+        env:
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
 
       - name: Init (TFC backend)
         run: terraform init -input=false
