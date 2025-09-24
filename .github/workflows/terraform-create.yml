@@ -41,3 +41,18 @@ jobs:
         with:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Apply triggered by GitHub Actions"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Notify via SNS (Infra created)
+        run: |
+          aws sns publish \
+            --topic-arn "$SNS_TOPIC_ARN" \
+            --subject "✅ Infra UP" \
+            --message "The AWS infra has been successfully created via GitHub Actions."
+        env:
+          SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
