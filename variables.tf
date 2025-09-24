@@ -61,3 +61,8 @@ variable "private_db_cidrs" {
   type    = list(string)
   default = ["10.0.160.0/20", "10.0.176.0/20"]
 }
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+}

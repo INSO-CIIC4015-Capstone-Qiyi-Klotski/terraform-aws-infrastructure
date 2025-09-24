@@ -147,7 +147,7 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "DB_PASSWORD"
-    value     = random_password.db_master.result
+    value     = var.db_password
   }
 
   # -------- ALB HTTPS Listener (443) --------
