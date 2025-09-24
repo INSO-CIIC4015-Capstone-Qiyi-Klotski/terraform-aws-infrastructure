@@ -52,11 +52,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Notify via SNS (Infra created)
+      - name: Notify via SNS (Infra destroyed)
         run: |
           aws sns publish \
             --topic-arn "$SNS_TOPIC_ARN" \
-            --subject "✅ Infra UP" \
-            --message "The AWS infra has been successfully created via GitHub Actions."
+            --subject "✅ Infra Down" \
+            --message "The AWS infra has been successfully destroyed via GitHub Actions."
         env:
           SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
