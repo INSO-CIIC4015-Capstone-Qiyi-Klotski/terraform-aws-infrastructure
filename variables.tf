@@ -66,3 +66,36 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
+
+
+
+# Bastion (jump host) --------------------------------------------
+variable "enable_bastion" {
+  description = "Create the bastion if true"
+  type        = bool
+  default     = true
+}
+
+variable "bastion_instance_type" {
+  description = "Instance type for the bastion"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "bastion_subnet_id" {
+  description = "PUBLIC subnet where to launch the bastion (optional). If empty, take the 1st public one."
+  type        = string
+  default     = ""
+}
+
+variable "bastion_allowed_cidr" {
+  description = "Your IP/32 if you want to enable SSH (optional). If null, do not open 22/tcp."
+  type        = string
+  default     = null
+}
+
+variable "bastion_key_name" {
+  description = "SSH key pair name (optional, only if you use port 22)"
+  type        = string
+  default     = null
+}

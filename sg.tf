@@ -149,3 +149,46 @@ resource "aws_security_group" "db_sg" {
 
   tags = merge(local.common_tags, { Name = "${var.project}-db-sg" })
 }
+
+
+
+# ---------- Security Group: Bastion ----------
+resource "aws_security_group" "bastion_sg" {
+  count       = var.enable_bastion ? 1 : 0
+  name        = "${var.project}-bastion-sg"
+  description = "Bastion access"
+  vpc_id      = aws_vpc.main.id
+
+  # (Optional) SSH from your IP if you defined bastion_allowed_cidr
+  dynamic "ingress" {
+    for_each = var.bastion_allowed_cidr == null ? [] : [1]
+    content {
+      description = "SSH from my IP"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [var.bastion_allowed_cidr]
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, { Name = "${var.project}-bastion-sg" })
+}
+
+# Allow BASTION to reach the RDS (5432) -------------------
+resource "aws_vpc_security_group_ingress_rule" "db_from_bastion" {
+  count                        = var.enable_bastion ? 1 : 0
+  security_group_id            = aws_security_group.db_sg.id         # RDS SG
+  referenced_security_group_id = aws_security_group.bastion_sg[0].id # SG of the bastion
+  ip_protocol                  = "tcp"
+  from_port                    = local.db_port
+  to_port                      = local.db_port
+  description                  = "Postgres from Bastion"
+}
+

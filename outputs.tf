@@ -94,3 +94,13 @@ output "be_artifacts_bucket" {
 output "sg_db_id" {
   value = aws_security_group.db_sg.id
 }
+
+
+# ---------- Bastion ----------
+output "bastion_instance_id" {
+  value = try(aws_instance.bastion[0].id, null)
+}
+
+output "bastion_public_ip" {
+  value = try(aws_instance.bastion[0].public_ip, null)
+}
