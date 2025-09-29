@@ -29,7 +29,7 @@ terraform {
 #   and remove/override 'profile' to avoid coupling to local config.
 # - 'default_tags' applies to all taggable resources automatically.
 provider "aws" {
-  region  = var.aws_region
+  region = var.aws_region
 
   # Organization-wide default tags (merged with resource-level tags).
   default_tags {

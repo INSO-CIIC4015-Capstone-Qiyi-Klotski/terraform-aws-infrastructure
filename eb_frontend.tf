@@ -95,12 +95,6 @@ resource "aws_elastic_beanstalk_environment" "fe_env" {
     value     = aws_security_group.fe_alb_sg.id
   }
 
-  # -------- Application environment variables --------
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "PORT"
-    value     = "80"
-  }
 
   # -------- Capacity (Auto Scaling) --------
   setting {
