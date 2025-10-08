@@ -67,3 +67,9 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.project}-ec2-profile"
   role = aws_iam_role.ec2_role.name
 }
+
+# Permitir que las instancias (rol de EB) usen Amazon SES
+resource "aws_iam_role_policy_attachment" "ses_full" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+}
