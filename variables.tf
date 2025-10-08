@@ -99,3 +99,8 @@ variable "bastion_key_name" {
   type        = string
   default     = null
 }
+
+variable "jwt_secret" {
+  type = string
+  sensitive = true
+}

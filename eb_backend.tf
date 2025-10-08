@@ -150,6 +150,30 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
     value     = var.db_password
   }
 
+  setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "JWT_SECRET"
+  value     = var.jwt_secret
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AWS_REGION"
+    value     = var.aws_region
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "SES_SENDER_EMAIL"
+    value     = "noreply@janieljoelnunezquintana.com"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "PUBLIC_BASE_URL"
+    value     = "https://api.janieljoelnunezquintana.com"
+  }
+
   # -------- ALB HTTPS Listener (443) --------
   # Use the validated ACM certificate ARN (DNS validated via dnd_tls.tf).
   setting {
