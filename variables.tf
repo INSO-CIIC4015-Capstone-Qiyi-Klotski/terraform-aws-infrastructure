@@ -114,3 +114,16 @@ variable "ses_sender_email"{
 variable "public_base_url" {
   type      = string
 }
+
+variable "avatar_cdn_base" {
+  type      = string
+}
+variable "daily_tz" {
+  type      = string
+}
+variable "avatar_bucket" {
+  type      = string
+}
+variable "avatar_prefix" {
+  type      = string
+}

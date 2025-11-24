@@ -174,6 +174,30 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
     value     = var.public_base_url
   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AVATAR_CDN_BASE"
+    value     = var.avatar_cdn_base
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DAILY_TZ"
+    value     = var.daily_tz
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AVATAR_BUCKET"
+    value     = var.avatar_bucket
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "AVATAR_PREFIX"
+    value     = var.avatar_prefix
+  }
+
   # -------- ALB HTTPS Listener (443) --------
   # Use the validated ACM certificate ARN (DNS validated via dnd_tls.tf).
   setting {
