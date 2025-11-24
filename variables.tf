@@ -104,3 +104,13 @@ variable "jwt_secret" {
   type = string
   sensitive = true
 }
+
+
+variable "ses_sender_email"{ 
+  type      = string
+  sensitive = false
+}
+
+variable "public_base_url" {
+  type      = string
+}

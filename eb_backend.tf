@@ -165,13 +165,13 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "SES_SENDER_EMAIL"
-    value     = "noreply@janieljoelnunezquintana.com"
+    value     = var.ses_sender_email
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "PUBLIC_BASE_URL"
-    value     = "https://api.janieljoelnunezquintana.com"
+    value     = var.public_base_url
   }
 
   # -------- ALB HTTPS Listener (443) --------
