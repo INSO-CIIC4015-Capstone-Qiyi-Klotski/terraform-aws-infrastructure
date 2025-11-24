@@ -127,3 +127,12 @@ variable "avatar_bucket" {
 variable "avatar_prefix" {
   type      = string
 }
+
+variable "cookie_domain" {
+  type = string
+}
+
+variable "cross_site_cookies" {
+  type    = string
+  default = "0" 
+}

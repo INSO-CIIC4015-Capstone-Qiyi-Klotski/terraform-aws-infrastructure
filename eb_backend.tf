@@ -198,6 +198,19 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
     value     = var.avatar_prefix
   }
 
+  
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "COOKIE_DOMAIN"
+    value     = var.cookie_domain
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "CROSS_SITE_COOKIES"
+    value     = var.cross_site_cookies
+  }
+
   # -------- ALB HTTPS Listener (443) --------
   # Use the validated ACM certificate ARN (DNS validated via dnd_tls.tf).
   setting {
