@@ -229,6 +229,18 @@ setting {
   value     = var.generation_secret  
 }
 
+setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "APP_LOG_LEVEL"
+  value     = "INFO"
+}
+
+setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "ENV_LOG_LEVEL"
+  value     = "WARNING"
+}
+
   # -------- ALB HTTPS Listener (443) --------
   # Use the validated ACM certificate ARN (DNS validated via dnd_tls.tf).
   setting {
