@@ -211,6 +211,24 @@ resource "aws_elastic_beanstalk_environment" "be_env" {
     value     = var.cross_site_cookies
   }
 
+  setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "ACCESS_TOKEN_MINUTES"
+  value     = "60"
+}
+
+setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "REFRESH_TOKEN_DAYS"
+  value     = "3"
+}
+
+setting {
+  namespace = "aws:elasticbeanstalk:application:environment"
+  name      = "GENERATION_SECRET"
+  value     = var.generation_secret  
+}
+
   # -------- ALB HTTPS Listener (443) --------
   # Use the validated ACM certificate ARN (DNS validated via dnd_tls.tf).
   setting {

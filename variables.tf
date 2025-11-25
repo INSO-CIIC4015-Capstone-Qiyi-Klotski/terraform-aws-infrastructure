@@ -136,3 +136,8 @@ variable "cross_site_cookies" {
   type    = string
   default = "0" 
 }
+
+variable "generation_secret" {
+  type = string
+  sensitive = true
+}
