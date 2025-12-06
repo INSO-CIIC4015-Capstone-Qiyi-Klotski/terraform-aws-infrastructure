@@ -49,7 +49,7 @@ resource "aws_db_instance" "postgres" {
   engine     = "postgres"
   # engine_version omitted to use AWS-recommended default
 
-  instance_class    = "db.t4g.small" # Cost-efficient instance type
+  instance_class    = "db.t4g.micro" # Cost-efficient instance type
   allocated_storage = 20
   storage_type      = "gp3"
 
