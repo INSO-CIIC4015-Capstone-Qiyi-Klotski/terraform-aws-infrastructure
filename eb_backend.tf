@@ -341,13 +341,13 @@ setting {
   setting {
     namespace = "aws:autoscaling:trigger"
     name      = "UpperThreshold"
-    value     = "70"
+    value     = "40"
   }
 
   setting {
     namespace = "aws:autoscaling:trigger"
     name      = "LowerThreshold"
-    value     = "30"
+    value     = "5"
   }
 
   # -------- Enhanced health reporting --------
