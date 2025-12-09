@@ -329,13 +329,13 @@ setting {
   setting {
     namespace = "aws:autoscaling:trigger"
     name      = "Period"
-    value     = "60"
+    value     = "1"
   }
 
   setting {
     namespace = "aws:autoscaling:trigger"
     name      = "BreachDuration"
-    value     = "180"
+    value     = "5"
   }
 
   setting {
