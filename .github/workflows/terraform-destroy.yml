@@ -1,6 +1,10 @@
 name: "TFC Destroy (plan+apply)"
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DESTROY to confirm'
+        required: true
 
 env:
   TF_CLOUD_ORGANIZATION: "Kiwi_Num_Slide"
@@ -13,12 +17,19 @@ jobs:
     name: "Destroy infra via TFC API"
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment: terraform-workflow
     permissions:
       contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Confirm destroy
+        if: ${{ github.event.inputs.confirm != 'DESTROY' }}
+        run: |
+          echo "❌ Confirmation failed"
+          exit 1
 
       - name: Upload Configuration
         id: upload
@@ -46,11 +57,11 @@ jobs:
           run: ${{ steps.run.outputs.run_id }}
           comment: "Destroy Apply triggered by GitHub Actions"
 
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      # - uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ secrets.AWS_REGION }}
 
       # - name: Notify via SNS (Infra destroyed)
       #   run: |
