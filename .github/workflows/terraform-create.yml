@@ -67,3 +67,25 @@ jobs:
       #       --message "The AWS infra has been successfully created via GitHub Actions."
       #   env:
       #     SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
+
+      - name: Trigger Backend deploy (workflow_dispatch)
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_WORKFLOW_DISPATCH_TOKEN }}
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/INSO-CIIC4015-Capstone-Qiyi-Klotski/kiwi-num-slide-backed/actions/workflows/deploy.yml/dispatches \
+            -d '{"ref":"main"}'
+
+      - name: Trigger Frontend deploy (workflow_dispatch)
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_WORKFLOW_DISPATCH_TOKEN }}
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/INSO-CIIC4015-Capstone-Qiyi-Klotski/kiwi-num-slide-frontend/actions/workflows/deploy.yml/dispatches \
+            -d '{"ref":"main"}'
